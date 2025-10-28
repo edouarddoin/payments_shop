@@ -1,10 +1,11 @@
 <div class="container">
   <div class="row py-4">
-    <div class="col-md-3"><%= "image here" %></div>
+    <div class="col-md-3"><%= "YOUR COMPANY LOGO" %></div>
     <div class="col">
-      <h1>Recapitulatif de la commande</h1>
+      <h1>Summary of your basket</h1>
       <p>Purchase of <strong><%= @order.product.name %></strong> for <strong><%= humanized_money_with_symbol @order.amount %></strong></p>
-<button id="pay" class="btn btn-primary">Pay</button>
+      <div stripe class="mt-4">
+        <button id="pay" class="btn btn-primary">Pay with Stripe</button>
       <script src="https://js.stripe.com/v3/"></script>
       <script>
         const paymentButton = document.getElementById('pay');
@@ -15,7 +16,9 @@
           });
         });
       </script>
-      <%= @order.checkout_session_id %>
+      <%# <%= @order.checkout_session_id %>
+      </div>
+
     </div>
   </div>
 </div>
