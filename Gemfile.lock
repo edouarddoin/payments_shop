@@ -68,6 +68,8 @@ GEM
       tzinfo (~> 2.0)
     addressable (2.8.0)
       public_suffix (>= 2.0.2, < 5.0)
+    adyen-ruby-api-library (11.0.0)
+      faraday
     bcrypt (3.1.18)
     bindex (0.8.1)
     bootsnap (1.12.0)
@@ -100,6 +102,12 @@ GEM
       dotenv (= 2.8.1)
       railties (>= 3.2)
     erubi (1.10.0)
+    faraday (2.14.0)
+      faraday-net_http (>= 2.0, < 3.5)
+      json
+      logger
+    faraday-net_http (3.4.1)
+      net-http (>= 0.5.0)
     globalid (1.0.0)
       activesupport (>= 5.0)
     i18n (1.10.0)
@@ -112,6 +120,8 @@ GEM
       activesupport (>= 5.0.0)
     jsbundling-rails (1.0.3)
       railties (>= 6.0.0)
+    json (2.15.2)
+    logger (1.7.0)
     loofah (2.18.0)
       crass (~> 1.0.2)
       nokogiri (>= 1.5.9)
@@ -132,6 +142,8 @@ GEM
       money (~> 6.13)
       railties (>= 3.0)
     msgpack (1.5.2)
+    net-http (0.6.0)
+      uri
     net-imap (0.2.3)
       digest
       net-protocol
@@ -221,6 +233,7 @@ GEM
       railties (>= 6.0.0)
     tzinfo (2.0.4)
       concurrent-ruby (~> 1.0)
+    uri (1.0.4)
     warden (1.2.9)
       rack (>= 2.0.9)
     web-console (4.2.0)
@@ -244,6 +257,7 @@ PLATFORMS
   x86_64-darwin-21
 
 DEPENDENCIES
+  adyen-ruby-api-library
   bootsnap
   capybara
   debug
