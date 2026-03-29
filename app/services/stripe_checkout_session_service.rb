@@ -1,4 +1,4 @@
-class StripeCheckoutSessionService
+class StripeCheckoutSession
   def call(checkout_session_id)
     order = Order.find_by(checkout_session_id)
     order.update(status_id: 9)
