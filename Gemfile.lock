@@ -70,7 +70,9 @@ GEM
       public_suffix (>= 2.0.2, < 5.0)
     adyen-ruby-api-library (11.0.0)
       faraday
+    base64 (0.3.0)
     bcrypt (3.1.18)
+    bigdecimal (4.1.2)
     bindex (0.8.1)
     bootsnap (1.12.0)
       msgpack (~> 1.2)
@@ -143,6 +145,7 @@ GEM
       money (~> 6.13)
       railties (>= 3.0)
     msgpack (1.5.2)
+    mutex_m (0.3.0)
     net-http (0.6.0)
       uri
     net-imap (0.2.3)
@@ -257,6 +260,8 @@ PLATFORMS
 
 DEPENDENCIES
   adyen-ruby-api-library
+  base64
+  bigdecimal (>= 1.2.7)
   bootsnap
   capybara
   debug
@@ -265,6 +270,7 @@ DEPENDENCIES
   jbuilder
   jsbundling-rails
   money-rails
+  mutex_m
   pg (~> 1.1)
   puma (~> 5.0)
   rails (~> 7.0.3)

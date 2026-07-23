@@ -1,13 +1,13 @@
-<%# <script src="https://js.stripe.com/v3/"></script> %>
-
+<% if @order.present? %>
 <div class="container">
   <div class="col-md-3">
-    Le status de la commande n°<%= @order.id %> est "<%= @order.status.name %>"
-  </div>
-  <div>Montant de la commande : <%= @order.amount %></div>
-  <%= @order.checkout_session_id %>
-  <div>
-   Client : <%= @order.user.email %>
+  Le status de la commande n<%= current_user.id %>
   </div>
   <%= link_to 'Retourner à la homepage', products_path %>
 </div>
+  <% else %>
+  <div class="container">
+    <p>Order not found.</p>
+  </div>
+<% end %>
+
