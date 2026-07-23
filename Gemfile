@@ -1,7 +1,7 @@
 source "https://rubygems.org"
 git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 
-ruby "3.0.3"
+ruby "3.4.7"
 
 # Gem Adyen for payment processing
 gem 'adyen-ruby-api-library'
@@ -50,8 +50,6 @@ gem "bootsnap", require: false
 
 gem "devise"
 gem 'money-rails'
-gem 'stripe'
-gem 'stripe_event'
 gem "dotenv-rails", groups: [:development, :test]
 
 # Use Active Storage variants [https://guides.rubyonrails.org/active_storage_overview.html#transforming-images]

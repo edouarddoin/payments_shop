@@ -17,29 +17,6 @@ class OrdersController < ApplicationController
 
   private
 
-  def create_stripe_session(order, product)
-    Stripe.api_key = ENV['STRIPE_SECRET_KEY']
-    # link to documentation : https://stripe.com/docs/api/checkout/sessions/create
-    Stripe::Checkout::Session.create({
-      success_url: order_url(order),
-      cancel_url: order_url(order),
-      line_items:[
-        {
-          quantity: 1,
-          price_data: {
-            product_data: {
-              name: product.name, description: product.description
-            },
-            unit_amount: product.price_cents.to_i,
-            currency: 'eur',
-          }
-        }
-      ],
-      mode: 'payment',
-    }
-    )
-  end
-
   def create_adyen_session(order)
     #Adyen create session documentation : https://docs.adyen.com/online-payments/web-drop-in/create-session
     AdyenPaymentService.({

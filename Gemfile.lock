@@ -131,6 +131,7 @@ GEM
     matrix (0.4.2)
     method_source (1.0.0)
     mini_mime (1.1.2)
+    mini_portile2 (2.8.9)
     minitest (5.16.1)
     monetize (1.12.0)
       money (~> 6.12)
@@ -159,7 +160,8 @@ GEM
       net-protocol
       timeout
     nio4r (2.5.8)
-    nokogiri (1.13.6-x86_64-darwin)
+    nokogiri (1.13.6)
+      mini_portile2 (~> 2.8.0)
       racc (~> 1.4)
     orm_adapter (0.5.0)
     pg (1.4.0)
@@ -220,10 +222,6 @@ GEM
       sprockets (>= 3.0.0)
     stimulus-rails (1.0.4)
       railties (>= 6.0.0)
-    stripe (7.0.0)
-    stripe_event (2.6.0)
-      activesupport (>= 3.1)
-      stripe (>= 2.8, < 8)
     strscan (3.0.3)
     thor (1.2.1)
     timeout (0.3.0)
@@ -255,6 +253,7 @@ GEM
 
 PLATFORMS
   x86_64-darwin-21
+  x86_64-linux
 
 DEPENDENCIES
   adyen-ruby-api-library
@@ -273,15 +272,13 @@ DEPENDENCIES
   selenium-webdriver
   sprockets-rails
   stimulus-rails
-  stripe
-  stripe_event
   turbo-rails
   tzinfo-data
   web-console
   webdrivers
 
 RUBY VERSION
-   ruby 3.0.3p157
+   ruby 3.4.7p58
 
 BUNDLED WITH
    2.3.15
