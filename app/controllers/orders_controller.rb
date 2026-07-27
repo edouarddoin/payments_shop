@@ -1,9 +1,5 @@
 require 'adyen-ruby-api-library'
 
-  adyen = Adyen::Client.new
-  adyen.api_key = ENV.fetch('ADYEN_API_KEY')
-  adyen.env = ENV.fetch('ADYEN_ENVIRONMENT', 'test').to_sym
-
 class OrdersController < ApplicationController
   def create
     product = Product.find(params[:product_id])
@@ -24,6 +20,10 @@ class OrdersController < ApplicationController
   private
 
   def create_adyen_session(order)
+    adyen = Adyen::Client.new
+    adyen.api_key = ENV.fetch('ADYEN_API_KEY')
+    adyen.env = ENV.fetch('ADYEN_ENVIRONMENT', 'test').to_sym
+    idempotency_key = SecureRandom.uuid
     #Adyen create session documentation : https://docs.adyen.com/online-payments/web-drop-in/create-session
     request_body ={
         merchantAccount: ENV['ADYEN_MERCHANT_ACCOUNT'],  
@@ -38,7 +38,7 @@ class OrdersController < ApplicationController
         shopperReference: current_user.id,
       }
 
-    result = adyen.checkout.payments_api.sessions(request_body, headers: { 'Idempotency-Key' => 'UUID' })
+    result = adyen.checkout.payments_api.sessions(request_body, headers: { 'Idempotency-Key' => idempotency_key })
   end
 
   def show
