@@ -37,8 +37,16 @@ class OrdersController < ApplicationController
         shopperEmail: current_user.email,
         shopperReference: current_user.id,
       }
-
-    result = adyen.checkout.payments_api.sessions(request_body, headers: { 'Idempotency-Key' => idempotency_key })
+    checkout = Adyen::Checkout.new(adyen, 68)
+    checkout.payments_api.sessions(
+      request_body,
+      headers: { 'Idempotency-Key' => SecureRandom.uuid }
+    )
+  rescue StandardError => e
+    Rails.logger.error("Adyen session request failed: #{e.class}: #{e.message}")
+    Rails.logger.error(e.backtrace.join("\n"))
+    raise
+    # result = adyen.checkout.payments_api.sessions(request_body, headers: { 'Idempotency-Key' => idempotency_key })
   end
 
   def show

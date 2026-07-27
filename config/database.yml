@@ -13,21 +13,38 @@
 #
 # Configure Using Gemfile
 # gem "pg"
-#
+
+# # morning routine is:
+# cmd service postgresql start
+# cmd bundle exec rails server
+
+# To check first:
+# pg_isready -h localhost -p 5432
+# 
+
+
 default: &default
   adapter: postgresql
   encoding: unicode
   # For details on connection pooling, see Rails configuration guide
   # https://guides.rubyonrails.org/configuring.html#database-pooling
-  pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
+  pool: <%= ENV.fetch("RAILS_MAX_THREADS", 5) %>
+  username: <%= ENV.fetch("DATABASE_USERNAME", ENV.fetch("POSTGRES_USER", "payments_shop")) %>
+  password: <%= ENV.fetch("DATABASE_PASSWORD", ENV.fetch("POSTGRES_PASSWORD", "payments_shop")) %>
+  host: <%= ENV.fetch("DATABASE_HOST", ENV.fetch("POSTGRES_HOST", "localhost")) %>
+  port: <%= ENV.fetch("DATABASE_PORT", ENV.fetch("POSTGRES_PORT", 5432)) %>
 
 development:
   <<: *default
-  database: adyen_shop_development
-  username: <%= ENV.fetch("DATABASE_USERNAME", "payments_shop") %>
-  password: <%= ENV.fetch("DATABASE_PASSWORD", "payments_shop") %>
-  host: localhost
-  port: 5432
+  database: <%= ENV.fetch("DATABASE_NAME", ENV.fetch("POSTGRES_DB", "adyen_shop_development")) %>
+
+test:
+  <<: *default
+  database: <%= ENV.fetch("TEST_DATABASE_NAME", "adyen_shop_test") %>
+
+production:
+  <<: *default
+  database: <%= ENV.fetch("DATABASE_NAME", ENV.fetch("POSTGRES_DB", "adyen_shop_production")) %>
 
   # The specified database role being used to connect to postgres.
   # For local development, credentials are loaded from environment variables.
@@ -35,8 +52,8 @@ development:
   # password: <%= ENV.fetch("DATABASE_PASSWORD", "payments_shop") %>
 
   # Use a TCP connection through localhost to avoid socket auth issues.
-  #host: localhost
-  #port: 5432
+  # host: localhost
+  # port: 5432
 
   # Schema search path. The server defaults to $user,public
   #schema_search_path: myapp,sharedapp,public
