@@ -1,13 +1,21 @@
-<% if @order.present? %>
 <div class="container">
+  <% if @order.present? %>
   <div class="col-md-3">
-  Le status de la commande n<%= current_user.id %>
+    <p>
+      Current user Id: <%= current_user.id %>
+    </p>
+    <p>
+      Order <%= @order.id %> status is : <%= @order.status.name %>
+    </p>
   </div>
   <%= link_to 'Retourner à la homepage', products_path %>
-</div>
   <% else %>
   <div class="container">
     <p>Order not found.</p>
   </div>
 <% end %>
 
+<p>
+<%= button_to 'Pay my order', pay_orders_path, params: { order_id: @order.id } %>
+</p>
+</div>

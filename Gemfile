@@ -6,6 +6,10 @@ ruby "3.4.7"
 # Gem Adyen for payment processing
 gem 'adyen-ruby-api-library'
 
+# Gem bootstrap for styling
+gem 'bootstrap', '~> 5.3.8'
+gem 'dartsass-sprockets'
+
 # Bundle edge Rails instead: gem "rails", github: "rails/rails", branch: "main"
 gem "rails", "~> 7.0.3"
 

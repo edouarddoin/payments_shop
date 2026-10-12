@@ -17,3 +17,14 @@
  .container {
   text-align: center;
  }
+
+ .btn-solid {
+  background-color: #17933c;
+  color: #fff;
+  padding: 10px 20px;
+  font-size: 16px;
+  cursor: pointer;
+  border-radius: 4px;
+  align-items: center;
+  transition: background-color 0.3s ease;
+}

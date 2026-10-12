@@ -22,7 +22,7 @@ Product.create(
   sku: 'p1',
   categories_id: cat.id,
   stock: 30,
-  description: 'Un produit extraordinaire',
+  description: 'An amazing product',
   price_cents: 400)
 puts 'One product created'
 
@@ -31,10 +31,12 @@ Product.create(
   sku: 'p2',
   categories_id: cat.id,
   stock: 30,
-  description: 'Un produit extraordinaire',
+  description: 'An amazing product',
   price_cents: 400)
 puts 'Two products created'
 
-Status.create(name: 'en cours de validation')
-Status.create(name: 'validé')
+Status.create(name: 'pending')
+Status.create(name: 'validated')
+Status.create(name: 'new')
+
 puts 'status created'
