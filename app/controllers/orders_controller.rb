@@ -16,11 +16,13 @@ class OrdersController < ApplicationController
   def pay
     order = current_user.orders.find_by(id: params[:order_id])
     adyen_session = create_adyen_session(order)
+    $client_key = ENV.fetch('ADYEN_CLIENT_KEY')
   end
 
   def show
     @order = current_user.orders.find_by(id: params[:id])
   end
+
 end
 
   private
@@ -43,31 +45,36 @@ end
         "expiresAt" => (Time.now + 3600).iso8601,
         "shopperLocale" => "en-US",
         "shopperEmail" => current_user.email,
-        "shopperReference" => current_user.id
+        "shopperReference" => "user_id_#{current_user.id}"
       }
     result = adyen.checkout.payments_api.sessions(request_body, headers: { 'Idempotency-Key' => SecureRandom.uuid })
+    # parsed_json = JSON.parse(json_string)
+    sessionResponse = JSON.parse(result.response.to_json)
+    # session_data = parsed_json["sessionData"]
+    $sessionData = sessionResponse.dig("sessionData")
+    $sessionId = sessionResponse.dig("id")
+
+
+      # data = JSON.load_file('user_data.json')
+      # puts "User: #{data['name']} (#{data['username']})"
+
+    if Rails.env.development?
+      Rails.logger.debug { "Adyen sessions request body: #{request_body.to_json}" }
+      Rails.logger.debug { "----" }
+      Rails.logger.debug { "Adyen sessions response: #{result.to_json}" }
+      Rails.logger.info("Adyen sessions URL: #{adyen.service_url('Checkout', 'sessions', adyen.checkout.version)}")
+      Rails.logger.info("Adyen session data: #{$sessionData}")
+      Rails.logger.info("Adyen session Id: #{$sessionId}")
+
+    else
+      Rails.logger.debug { "This is not a development environment" }
+    end
 
     rescue StandardError => e
     Rails.logger.error("Adyen session request failed: #{e.class}: #{e.message}")
     Rails.logger.error(e.backtrace.join("\n"))
     if e.respond_to?(:response)
     Rails.logger.error("Response details: #{e.response.inspect}")
-    end
-    if Rails.env.development?
-      logged_body = request_body.deep_dup
-
-      %w[merchantAccount shopperEmail shopperReference reference returnUrl].each do |key|
-        logged_body[key] = "[REDACTED]" if logged_body.key?(key)
-      end
-      Rails.logger.debug { "Adyen sessions request body: #{logged_body.to_json}" }
-
-      logged_response = e.respond_to?(:response) ? e.response.deep_dup : nil
-      if logged_response
-        %w[pspReference resultCode].each do |key|
-          logged_response[key] = "[REDACTED]" if logged_response.key?(key)
-        end
-        Rails.logger.debug { "Adyen sessions response: #{logged_response.to_json}" }
-      end
     end
     raise
   end

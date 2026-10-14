@@ -1,0 +1,29 @@
+import { AdyenCheckout, Dropin } from '@adyen/adyen-web/auto';
+import '@adyen/adyen-web/styles/adyen.css';
+
+<div id="dropin-container"></div>
+
+<script type="module">
+  import { AdyenCheckout, Dropin } from 'https://checkoutshopper-live.adyen.com/checkoutshopper/sdk/6.31.1/adyen.js';
+  
+#   Safely inject the Ruby data into JavaScript
+  const sessionData = <%= raw @session_data.to_json %>;
+  
+  async function initCheckout() {
+    const checkout = await AdyenCheckout({
+      environment: 'test',
+      clientKey: 'YOUR_CLIENT_KEY_HERE',
+      session: sessionData,
+      onPaymentCompleted: (result, component) => {
+        console.log(result);
+      },
+      onError: (error, component) => {
+        console.error(error.name, error.message, error.stack, component);
+      }
+    });
+
+    const dropin = new Dropin(checkout).mount('#dropin-container');
+  }
+  
+  initCheckout();
+</script>

@@ -68,7 +68,7 @@ GEM
       tzinfo (~> 2.0)
     addressable (2.8.0)
       public_suffix (>= 2.0.2, < 5.0)
-    adyen-ruby-api-library (11.0.0)
+    adyen-ruby-api-library (12.0.0)
       faraday
     base64 (0.3.0)
     bcrypt (3.1.18)
