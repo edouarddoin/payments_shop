@@ -1,0 +1,12 @@
+<p>Order details</p>
+<p>Order id <%= @order.id %> price is : <%= @order_price %></p>
+<%= link_to 'Return to order page', order_path(@order) %>
+
+
+<div id="dropin-container"
+     data-session-id="<%= @adyen_session_id %>"
+     data-session-data="<%= @adyen_session_data %>"
+     data-amount="<%= @order_price %>"
+     data-client-key="<%= ENV.fetch('ADYEN_CLIENT_KEY') %>">
+</div>
+

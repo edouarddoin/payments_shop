@@ -10,20 +10,24 @@ class OrdersController < ApplicationController
       redirect_to product_path(product.id), alert: "Failed to create order."
     end
 
-  # order_price = order.amount_cents.to_i
   end
-
+  
   def pay
-    order = current_user.orders.find_by(id: params[:order_id])
-    adyen_session = create_adyen_session(order)
+    @order = current_user.orders.find_by(id: params[:id])
+    @order_price = @order.amount_cents.to_i if @order.present?
+    @adyen_session = create_adyen_session(@order)
+    @adyen_session_id = @sessionId
+    @adyen_session_data = @sessionData
     $client_key = ENV.fetch('ADYEN_CLIENT_KEY')
+
   end
 
   def show
     @order = current_user.orders.find_by(id: params[:id])
-  end
+    @order_price = @order.amount_cents.to_i if @order.present?
+    @order_id = @order.id if @order.present?
 
-end
+  end
 
   private
 
@@ -37,22 +41,23 @@ end
     #Adyen create session documentation : https://docs.adyen.com/online-payments/web-drop-in/create-session
     request_body = {
         "merchantAccount" => ENV['ADYEN_MERCHANT_ACCOUNT'],  
-        "amount" => { currency: "EUR", value: order.amount_cents.to_i },
-        "returnUrl" => order_url(order),
+        "amount" => { currency: "EUR", value: @order_price },
+        "returnUrl" => order_url(@order.id),
         "reference" => "order-#{Time.now.to_i}",
-        "countryCode" => "NL",
+        "countryCode" => "FR",
         "channel" => "Web",
         "expiresAt" => (Time.now + 3600).iso8601,
         "shopperLocale" => "en-US",
-        "shopperEmail" => current_user.email,
+        "shopperEmail" => "#{current_user.email}",
         "shopperReference" => "user_id_#{current_user.id}"
       }
     result = adyen.checkout.payments_api.sessions(request_body, headers: { 'Idempotency-Key' => SecureRandom.uuid })
     # parsed_json = JSON.parse(json_string)
     sessionResponse = JSON.parse(result.response.to_json)
     # session_data = parsed_json["sessionData"]
-    $sessionData = sessionResponse.dig("sessionData")
-    $sessionId = sessionResponse.dig("id")
+    @sessionData = sessionResponse.dig("sessionData")
+    @sessionId = sessionResponse.dig("id")
+
 
 
       # data = JSON.load_file('user_data.json')
@@ -63,8 +68,8 @@ end
       Rails.logger.debug { "----" }
       Rails.logger.debug { "Adyen sessions response: #{result.to_json}" }
       Rails.logger.info("Adyen sessions URL: #{adyen.service_url('Checkout', 'sessions', adyen.checkout.version)}")
-      Rails.logger.info("Adyen session data: #{$sessionData}")
-      Rails.logger.info("Adyen session Id: #{$sessionId}")
+      Rails.logger.info("Adyen session data: #{@sessionData}")
+      Rails.logger.info("Adyen session Id: #{@sessionId}")
 
     else
       Rails.logger.debug { "This is not a development environment" }
@@ -82,3 +87,5 @@ end
   def validate
     @order.update(status_id: 2)
   end
+
+end

@@ -8,7 +8,7 @@ Rails.application.routes.draw do
   resources :products, only: [:index, :show, :new]
 
   resources :orders, only: [:show, :create, :validate, :update] do
-    collection do
+    member do
       post :pay
     end
   end
