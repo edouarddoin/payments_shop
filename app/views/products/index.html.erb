@@ -1,16 +1,15 @@
 
-<div class= "container">
-  <% @products.each do |product| %>
-    <ul>
-      <h3><%= product.name %></h3>
-      <p>Product description : <%= product.description %></p>
-      <p>Product stock : <%= product.stock %></p>
-      <p>Product price : <%= humanized_money(product.price)%>€</p>
-    </ul>
-    <%= link_to "More info", product_path(product) %>
-  <% end %>
-</div>
+
+<% @products.each do |product| %>
+  <div class= "product_card">
+    <h3><%= product.name %></h3>
+    <p>Product description : <%= product.description %></p>
+    <p>Product stock : <%= product.stock %></p>
+    <p class="product_price"> Product price : <%= humanized_money(product.price)%>€</p>
+    <p><%= button_to "More info", product_path(product), method: :get %></p>
+  </div>
+<% end %>
 
 <div class="addproduct">
-  <%= link_to "add a product", new_product_path %>
+  <%= button_to "add a product", new_product_path, method: :get  %>
 </div>

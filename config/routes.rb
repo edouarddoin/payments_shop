@@ -10,6 +10,8 @@ Rails.application.routes.draw do
   resources :orders, only: [:show, :create, :validate, :update] do
     member do
       post :pay
+      get :pay
+      post :apply_discount
     end
   end
   

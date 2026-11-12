@@ -12,6 +12,7 @@ Order.destroy_all
 Product.destroy_all
 User.destroy_all
 Status.destroy_all
+Discount.destroy_all
 puts 'DB Cleaned'
 puts 'Creating categories...'
 cat = Category.create(name: 'cat1')
@@ -34,6 +35,19 @@ Product.create(
   description: 'An amazing product',
   price_cents: 400)
 puts 'Two products created'
+
+puts 'Creating discount codes'
+Discount.create(
+  code: 'DISCOUNT10',
+  amount: 10,
+  max_use: 5000
+)
+Discount.create(
+  code: 'DISCOUNT20',
+  amount: 20,
+  max_use: 5000
+)
+puts 'Discount codes created'
 
 Status.create(name: 'pending')
 Status.create(name: 'validated')

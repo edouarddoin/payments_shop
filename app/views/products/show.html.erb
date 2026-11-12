@@ -1,15 +1,14 @@
+<div class="product_card">
+    <p> <%= @product.name %></p>
+    <p> Product left in stock: <%= @product.stock %></p>
+    <p>Price:<%=humanized_money(@product.price)%>€</p>
 
-<ul>
-  <li>Name:<%= @product.name %></li>
-  <li> Il reste <%= @product.stock %> produits en stock</li>
-  <li>Prix : <%=humanized_money(@product.price)%>€</li>
-</ul>
-
-<%# <% ER %>
-<%# <%=  ==PE %>
+  <%# <% ER %>
+  <%# <%=  ==PE %>
 
 
-<%= form_with url: orders_path, data: {turbo: false} do %>
-  <%= hidden_field_tag 'product_id', @product.id %>
-  <%= submit_tag 'Purchase', class: 'btn btn-primary' %>
-<% end %>
+  <%= form_with url: orders_path, data: {turbo: false} do %>
+    <%= hidden_field_tag 'product_id', @product.id %>
+    <%= submit_tag 'Purchase', class: 'btn btn-primary' %>
+  <% end %>
+</div>

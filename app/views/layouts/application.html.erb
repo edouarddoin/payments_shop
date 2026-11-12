@@ -12,8 +12,20 @@
   </head>
 
   <body>
+    <div class="head">
+      <p>AdyenShop</p>
+      <nav class="navbar">
+        <% if user_signed_in? %>
+          <span><%= current_user.email %></span>
+          <%= button_to "Log out", destroy_user_session_path, method: :delete, class: "logout-button" %>
+        <% end %>
+      </nav>
+    </div>
     <%= yield %>
-    <p class="notice"><%= notice %></p>
-    <p class="alert"><%= alert %></p>
+    <div class="flash-container">
+      <% flash.each do |type, message| %>
+        <div class="flash-message flash-<%= type %>"><%= message %></div>
+      <% end %>
+    </div>
   </body>
 </html>

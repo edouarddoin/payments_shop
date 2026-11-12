@@ -10,5 +10,16 @@ document.addEventListener("turbo:load", async() => {
         console.error("Error loading checkout module: Check in application.js file", error);
     }
 });
+
+document.addEventListener("turbo:load", () => {
+    document.querySelectorAll(".flash-message").forEach(
+        (message) => {
+            setTimeout(() => {
+                console.log("Flash timer fired");
+                message.classList.add("hide");
+            }, 7000);
+    });
+});
+
 import "@hotwired/turbo-rails"
 import "./controllers"

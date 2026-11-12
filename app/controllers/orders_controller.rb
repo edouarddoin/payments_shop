@@ -5,7 +5,7 @@ class OrdersController < ApplicationController
     product = Product.find(params[:product_id])
     order = Order.create!(product: product, product_sku: product.sku, amount_cents: product.price_cents, status_id: 1, user_id: current_user.id)
     if order.persisted?
-      redirect_to order_path(order.id), notice: "Order.#{order.id} created successfully"
+      redirect_to order_path(order.id), notice: "Your order number #{order.id} created successfully"
     else
       redirect_to product_path(product.id), alert: "Failed to create order."
     end
@@ -13,20 +13,25 @@ class OrdersController < ApplicationController
   end
   
   def pay
+    @currency = "EUR"
     @order = current_user.orders.find_by(id: params[:id])
     @order_price = @order.amount_cents.to_i if @order.present?
     @adyen_session = create_adyen_session(@order)
     @adyen_session_id = @sessionId
     @adyen_session_data = @sessionData
     $client_key = ENV.fetch('ADYEN_CLIENT_KEY')
-
   end
 
   def show
     @order = current_user.orders.find_by(id: params[:id])
-    @order_price = @order.amount_cents.to_i if @order.present?
-    @order_id = @order.id if @order.present?
+    
 
+  end
+
+  def apply_discount
+    @order = current_user.orders.find_by(id: params[:id])
+    discount_code = params[:discount_code]
+    @order_price = @order.amount_cents.to_i - discount.amount_cents if discount = Discount.find_by(code: discount_code)
   end
 
   private
@@ -41,16 +46,19 @@ class OrdersController < ApplicationController
     #Adyen create session documentation : https://docs.adyen.com/online-payments/web-drop-in/create-session
     request_body = {
         "merchantAccount" => ENV['ADYEN_MERCHANT_ACCOUNT'],  
-        "amount" => { currency: "EUR", value: @order_price },
+        "amount" => { currency: @currency, value: @order_price },
         "returnUrl" => order_url(@order.id),
         "reference" => "order-#{Time.now.to_i}",
-        "countryCode" => "FR",
+        "countryCode" => "NL",
         "channel" => "Web",
         "expiresAt" => (Time.now + 3600).iso8601,
         "shopperLocale" => "en-US",
-        "shopperEmail" => "#{current_user.email}",
-        "shopperReference" => "user_id_#{current_user.id}"
-      }
+        "shopperEmail" => "edouard.doin@adyen.com",
+        "shopperReference" => "user_id_#{current_user.id}",
+        "recurringProcessingModel" => "CardOnFile",
+        "shopperInteraction" => "Ecommerce",
+        "storePaymentMethodMode" => "askForConsent"
+    }
     result = adyen.checkout.payments_api.sessions(request_body, headers: { 'Idempotency-Key' => SecureRandom.uuid })
     # parsed_json = JSON.parse(json_string)
     sessionResponse = JSON.parse(result.response.to_json)

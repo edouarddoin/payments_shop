@@ -14,8 +14,9 @@ export async function initCheckout() {
         value: Number(container.dataset.amount), // The amount value is in minor units. For example, for EUR 10.00, this value should be 1000.
         currency: 'EUR'
     },
+    openFirstPaymentMethod: false,
     locale: 'en-US',
-    countryCode: 'FR',
+    countryCode: 'NL',
     showPayButton: true,
     clientKey: container.dataset.clientKey, // Public key used for client-side authentication: https://docs.adyen.com/development-resources/client-side-authentication
     onPaymentCompleted: (result, component) => {
@@ -25,13 +26,15 @@ export async function initCheckout() {
         console.info(result, component);
     },
     onError: (error, component) => {
-        console.error(error.name, error.message, error.stack, component);
+        console.error("OnError is called:",error.name, error.message, error.stack, component);
     },
-    onSubmit(state, component, actions){
-        console.info(state, component, actions);
-    },
-    beforeSubmit(data, component, actions){
-        console.log(data, component, actions);
+    beforeSubmit(data, component, actions, state){
+        console.log('Before submit is called', state);
+        console.info(data, component, actions);
+        console.info("[Adyen] beforeSubmit entered");
+        // Continue the Sessions flow.
+        actions.resolve(data);
+        console.info("[Adyen] beforeSubmit released");
     }
   };
 
@@ -40,7 +43,8 @@ export async function initCheckout() {
           card: {
               hasHolderName: true,
               holderNameRequired: true, 
-              openFirstPaymentMethod: true
+              openFirstPaymentMethod: true,
+              openFirstStoredPaymentMethod : true
           },
         onReady: () => {},
       }
