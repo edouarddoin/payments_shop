@@ -39,13 +39,13 @@ puts 'Two products created'
 puts 'Creating discount codes'
 Discount.create(
   code: 'DISCOUNT10',
-  amount: 10,
-  max_use: 5000
+  amount_cents: 10,
+  max_use_per_order: 1
 )
 Discount.create(
   code: 'DISCOUNT20',
-  amount: 20,
-  max_use: 5000
+  amount_cents: 20,
+  max_use_per_order: 1
 )
 puts 'Discount codes created'
 

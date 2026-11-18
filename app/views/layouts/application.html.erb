@@ -18,6 +18,8 @@
         <% if user_signed_in? %>
           <span><%= current_user.email %></span>
           <%= button_to "Log out", destroy_user_session_path, method: :delete, class: "logout-button" %>
+        <% else %>
+          <%= link_to "Log in", new_user_session_path, method: :create, class: "login-button" %>
         <% end %>
       </nav>
     </div>

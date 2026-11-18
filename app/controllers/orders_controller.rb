@@ -24,14 +24,24 @@ class OrdersController < ApplicationController
 
   def show
     @order = current_user.orders.find_by(id: params[:id])
-    
-
   end
 
   def apply_discount
     @order = current_user.orders.find_by(id: params[:id])
     discount_code = params[:discount_code]
-    @order_price = @order.amount_cents.to_i - discount.amount_cents if discount = Discount.find_by(code: discount_code)
+    discountValue = Discount.find_by(code: discount_code)&.amount_cents
+    Rails.logger.debug { "Discount amount applied is: #{discountValue} | to order: #{@order.id}" }
+    if discount_code.present? && discountValue.present? 
+      @order.update(amount_cents: @order.amount_cents - discountValue)
+      flash.now[:"notice"] = "Discount code applied successfully."
+      #once the discount is applied, the session needs to be updated with the new order price. 
+      updateSession
+    else
+      Rails.logger.debug { "Invalid discount code: #{discount_code} or discount value not found." }
+      flash.now[:"alert"] = "Invalid discount code."
+    end
+    Rails.logger.debug { "New order price is: #{@order.amount_cents}"}
+    # if necessary create a new value call "newOrderPrice" to store the new price after discount.
   end
 
   private
@@ -57,7 +67,8 @@ class OrdersController < ApplicationController
         "shopperReference" => "user_id_#{current_user.id}",
         "recurringProcessingModel" => "CardOnFile",
         "shopperInteraction" => "Ecommerce",
-        "storePaymentMethodMode" => "askForConsent"
+        "storePaymentMethodMode" => "askForConsent",
+        "payable" => false #needs to be switch to true once the order amount has been updated (discount, qty, ...).
     }
     result = adyen.checkout.payments_api.sessions(request_body, headers: { 'Idempotency-Key' => SecureRandom.uuid })
     # parsed_json = JSON.parse(json_string)
@@ -90,6 +101,24 @@ class OrdersController < ApplicationController
     Rails.logger.error("Response details: #{e.response.inspect}")
     end
     raise
+  end
+
+  def updateSession
+    adyen = Adyen::Client.new
+    adyen.api_key = ENV.fetch('ADYEN_API_KEY')
+    adyen.env = :test
+    Rails.logger.info("IS ADYEN_ENVIRONMENT present: #{adyen.env.present?}")
+    Rails.logger.info("IS ADYEN_API_KEY present: #{adyen.api_key.present?}")
+    # Create a new session with the updated amount and currency
+    request_body = {
+      "sessionData" => @sessionData,
+      "amount" => { currency: @currency, value: @order_price },
+      "payable" => true # Set to true since the order amount has been updated
+    }
+    updateSession_result = adyen.checkout.payments_api.update_session(request_body, @sessionId, headers: { 'Idempotency-Key' => SecureRandom.uuid })
+    Rails.logger.debug { "Adyen update session request body: #{request_body.to_json}" }
+    Rails.logger.debug { "Adyen update session response: #{updateSession_result.to_json}" }
+    Rails.logger.info("Adyen update session URL: #{adyen.service_url('UpdateSession', 'sessions', adyen.checkout.version)}")
   end
 
   def validate

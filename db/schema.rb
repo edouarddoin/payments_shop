@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2026_11_12_101958) do
+ActiveRecord::Schema[7.0].define(version: 2026_11_17_142627) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -22,8 +22,8 @@ ActiveRecord::Schema[7.0].define(version: 2026_11_12_101958) do
 
   create_table "discounts", force: :cascade do |t|
     t.string "code"
-    t.money "amount", scale: 2
-    t.integer "max_use"
+    t.money "amount_cents", scale: 2
+    t.integer "max_use_per_order", default: 1
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
