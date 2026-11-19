@@ -21,5 +21,8 @@ document.addEventListener("turbo:load", () => {
     });
 });
 
+document.addEventListener("turbo:load", () => {
+    
+
 import "@hotwired/turbo-rails"
 import "./controllers"

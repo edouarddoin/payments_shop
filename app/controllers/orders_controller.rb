@@ -35,7 +35,6 @@ class OrdersController < ApplicationController
       @order.update(amount_cents: @order.amount_cents - discountValue)
       flash.now[:"notice"] = "Discount code applied successfully."
       #once the discount is applied, the session needs to be updated with the new order price. 
-      updateSession
     else
       Rails.logger.debug { "Invalid discount code: #{discount_code} or discount value not found." }
       flash.now[:"alert"] = "Invalid discount code."
@@ -68,7 +67,7 @@ class OrdersController < ApplicationController
         "recurringProcessingModel" => "CardOnFile",
         "shopperInteraction" => "Ecommerce",
         "storePaymentMethodMode" => "askForConsent",
-        "payable" => false #needs to be switch to true once the order amount has been updated (discount, qty, ...).
+        "payable" => true #needs to be switch to true once the order amount has been updated (discount, qty, ...).
     }
     result = adyen.checkout.payments_api.sessions(request_body, headers: { 'Idempotency-Key' => SecureRandom.uuid })
     # parsed_json = JSON.parse(json_string)
@@ -76,11 +75,7 @@ class OrdersController < ApplicationController
     # session_data = parsed_json["sessionData"]
     @sessionData = sessionResponse.dig("sessionData")
     @sessionId = sessionResponse.dig("id")
-
-
-
-      # data = JSON.load_file('user_data.json')
-      # puts "User: #{data['name']} (#{data['username']})"
+    order.update!(checkout_session_id: @sessionId, checkout_session_data: @sessionData)
 
     if Rails.env.development?
       Rails.logger.debug { "Adyen sessions request body: #{request_body.to_json}" }
@@ -103,22 +98,26 @@ class OrdersController < ApplicationController
     raise
   end
 
-  def updateSession
+  def updateSession(order)
+    @updateSessionId = @order.checkout_session_id
+    @updateSessionData = @order.checkout_session_data
     adyen = Adyen::Client.new
     adyen.api_key = ENV.fetch('ADYEN_API_KEY')
     adyen.env = :test
     Rails.logger.info("IS ADYEN_ENVIRONMENT present: #{adyen.env.present?}")
     Rails.logger.info("IS ADYEN_API_KEY present: #{adyen.api_key.present?}")
-    # Create a new session with the updated amount and currency
+    # Update the exisiting session with the updated amount and currency
+
     request_body = {
-      "sessionData" => @sessionData,
-      "amount" => { currency: @currency, value: @order_price },
+      "sessionData" => @updateSessionData,
+      "amount" => { currency: "EUR", value: @order.amount_cents.to_i},
       "payable" => true # Set to true since the order amount has been updated
     }
-    updateSession_result = adyen.checkout.payments_api.update_session(request_body, @sessionId, headers: { 'Idempotency-Key' => SecureRandom.uuid })
-    Rails.logger.debug { "Adyen update session request body: #{request_body.to_json}" }
-    Rails.logger.debug { "Adyen update session response: #{updateSession_result.to_json}" }
-    Rails.logger.info("Adyen update session URL: #{adyen.service_url('UpdateSession', 'sessions', adyen.checkout.version)}")
+    updateSession_result = adyen.checkout.payments_api.update_session(request_body, @updateSessionId, headers: { 'Idempotency-Key' => SecureRandom.uuid })
+    Rails.logger.debug { "Adyen UPDATE session request body: #{request_body.to_json}" }
+    Rails.logger.debug { "Adyen UPDATE session response: #{updateSession_result.to_json}" }
+    Rails.logger.info("Adyen UPDATE session URL: #{adyen.service_url('Checkout', 'update_session', adyen.checkout.version)}")
+
   end
 
   def validate

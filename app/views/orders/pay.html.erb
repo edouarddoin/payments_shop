@@ -10,11 +10,6 @@
           <h1>Your order summary</h1>
           <p>Order <%= @order.id %> total price is : <%= @order_price %> <%= @currency %></p>
           <P>Products in your order : <%= @order.product.name %></P>
-          <p>Add a discount code to your order</p>
-          <%= form_with url: apply_discount_order_path(@order), method: :post, local: true do |form| %>
-          <%= form.text_field :discount_code, placeholder: "Enter discount code" %>
-          <%= form.submit "Apply" %>
-          <% end %>
      </div>
 </div>
 
