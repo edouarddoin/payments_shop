@@ -1,20 +1,20 @@
 <div class="container">
-  <% if @order.present? %>
+  <% if @order.present? && @order.status.name == "pending" %>
     <div class="col-md-3">
       <p>Order <%= @order.id %> status is : <%= @order.status.name %></p>
-      <p>Order amount: <%= @order.amount_cents %> EUR</p>
+      <p>Order amount: <%= @order.amount_cents.to_i %> EUR</p>
 
       <p class="discount-code-form">
         <label for="discount_code">Add a discount code to your order:</label>
         <%= form_with url: apply_discount_order_path(@order), method: :post, local: true do |form| %>
-          <%= form.text_field :discount_code, placeholder: "Enter discount code", class: "form-control" %>
+          <%= form.text_field :discount_code, placeholder: "Enter discount here", class: "form-control" %>
           <%= form.submit "Apply", class: "btn btn-secondary" %>
         <% end %>
       </p>
       <%= form_with url: pay_order_path(@order), method: :post, data: {turbo: false} do %>
         <%= submit_tag 'Pay my order', class: 'btn btn-primary' %>
       <% end %>
-      <p><%= link_to 'Return the homepage', products_path %></p>
+      <p><%= link_to 'Return the homepage', root_path %></p>
     </div>
   <% else %>
     <p>Order not found.</p>

@@ -2,6 +2,9 @@ Rails.application.routes.draw do
   devise_for :users
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 
+# Webhook notification route for Adyen payment status updates
+  post "/webhooks/adyen", to: "adyen_webhooks#create"
+
   # Defines the root path route ("/")
   root 'products#index'
 

@@ -13,7 +13,8 @@
 
   <body>
     <div class="head">
-      <p>AdyenShop</p>
+      <p> <%= link_to 'AdyenShop', root_path %></p>
+      
       <nav class="navbar">
         <% if user_signed_in? %>
           <span><%= current_user.email %></span>

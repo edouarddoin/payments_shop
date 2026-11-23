@@ -33,11 +33,11 @@ class OrdersController < ApplicationController
     Rails.logger.debug { "Discount amount applied is: #{discountValue} | to order: #{@order.id}" }
     if discount_code.present? && discountValue.present? 
       @order.update(amount_cents: @order.amount_cents - discountValue)
-      flash.now[:"notice"] = "Discount code applied successfully."
+      redirect_to order_path(@order), notice: "Discount code applied successfully."
       #once the discount is applied, the session needs to be updated with the new order price. 
     else
       Rails.logger.debug { "Invalid discount code: #{discount_code} or discount value not found." }
-      flash.now[:"alert"] = "Invalid discount code."
+      redirect_to order_path(@order), alert: "Invalid discount code."
     end
     Rails.logger.debug { "New order price is: #{@order.amount_cents}"}
     # if necessary create a new value call "newOrderPrice" to store the new price after discount.
