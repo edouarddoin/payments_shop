@@ -2,7 +2,7 @@
   <% if @order.present? && @order.status.name == "pending" %>
     <div class="col-md-3">
       <p>Order <%= @order.id %> status is : <%= @order.status.name %></p>
-      <p>Order amount: <%= @order.amount_cents.to_i %> EUR</p>
+      <p>Order amount: <%= humanized_money(@order.amount)%> EUR</p>
 
       <p class="discount-code-form">
         <label for="discount_code">Add a discount code to your order:</label>

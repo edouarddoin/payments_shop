@@ -3,7 +3,8 @@ require 'adyen-ruby-api-library'
 class OrdersController < ApplicationController
   def create
     product = Product.find(params[:product_id])
-    order = Order.create!(product: product, product_sku: product.sku, amount_cents: product.price_cents, status_id: 1, user_id: current_user.id)
+    statusPending = Status.find_by!(name: "pending")
+    order = Order.create!(product: product, product_sku: product.sku, amount_cents: product.price_cents, status_id: statusPending.id , user_id: current_user.id)
     if order.persisted?
       redirect_to order_path(order.id), notice: "Your order number #{order.id} created successfully"
     else
@@ -67,7 +68,8 @@ class OrdersController < ApplicationController
         "recurringProcessingModel" => "CardOnFile",
         "shopperInteraction" => "Ecommerce",
         "storePaymentMethodMode" => "askForConsent",
-        "payable" => true #needs to be switch to true once the order amount has been updated (discount, qty, ...).
+        "payable" => true, #needs to be switch to true once the order amount has been updated (discount, qty, ...).
+        "additionalData" => {"allowPartialAuth" => true}
     }
     result = adyen.checkout.payments_api.sessions(request_body, headers: { 'Idempotency-Key' => SecureRandom.uuid })
     # parsed_json = JSON.parse(json_string)
@@ -121,7 +123,7 @@ class OrdersController < ApplicationController
   end
 
   def validate
-    @order.update(status_id: 2)
+    order.update!(status: Status.find_by!(name: "validated")) unless order.status.name == "validated"
   end
 
 end

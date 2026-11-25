@@ -36,6 +36,16 @@ Product.create(
   price_cents: 400)
 puts 'Two products created'
 
+puts 'creating products'
+Product.create(
+  name: 'Product 3',
+  sku: 'p1',
+  categories_id: cat.id,
+  stock: 30,
+  description: 'Partial auth test',
+  price_cents: 54139)
+puts 'One product created'
+
 puts 'Creating discount codes'
 Discount.create(
   code: 'DISCOUNT10',

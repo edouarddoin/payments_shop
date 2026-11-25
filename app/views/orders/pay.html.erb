@@ -8,10 +8,9 @@
      </div>
      <div class="cart_summary">
           <h1>Your order summary</h1>
-          <p>Order <%= @order.id %> total price is : <%= @order_price %> <%= @currency %></p>
+          <p>Order <%= @order.id %> total price is : <%= humanized_money(@order.amount)%> <%=@currency %></p>
           <P>Products in your order : <%= @order.product.name %></P>
      </div>
 </div>
 
 <p align="center"><%= link_to 'Return to homepage', root_path %></p>
-
