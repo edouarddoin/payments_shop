@@ -4,7 +4,10 @@
      data-session-id="<%= @adyen_session_id %>"
      data-session-data="<%= @adyen_session_data %>"
      data-amount="<%= @order_price %>"
-     data-client-key="<%= ENV.fetch('ADYEN_CLIENT_KEY') %>">
+     data-client-key="<%= ENV.fetch('ADYEN_CLIENT_KEY') %>"
+     data-order-id="<%= @order.id %>">
+
+
      </div>
      <div class="cart_summary">
           <h1>Your order summary</h1>

@@ -15,6 +15,7 @@ Rails.application.routes.draw do
       post :pay
       get :pay
       post :apply_discount
+      get :payment_result
     end
   end
   

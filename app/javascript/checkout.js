@@ -20,7 +20,9 @@ export async function initCheckout() {
     showPayButton: true,
     clientKey: container.dataset.clientKey, // Public key used for client-side authentication: https://docs.adyen.com/development-resources/client-side-authentication
     onPaymentCompleted: (result, component) => {
-        console.info("Payment completed:", result, component);
+      const orderId = container.dataset.orderId;
+      window.location.href =`/orders/${orderId}/payment_result?sessionResult=${encodeURIComponent(result.sessionResult)}`;
+      console.info("Payment completed:", result, component);
     },
     onPaymentFailed: (result, component) => {
         console.info("Payment failed:", result, component);
