@@ -20,4 +20,6 @@ Rails.application.routes.draw do
   end
   
   resources :payments, only: [:new]
+
+  resources :users,  only: [:show]
 end

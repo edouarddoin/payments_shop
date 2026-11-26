@@ -16,7 +16,13 @@
       <% end %>
       <p><%= link_to 'Return the homepage', root_path %></p>
     </div>
-  <% else %>
+  <% elsif @order.present? && @order.status.name == "validated" %>
+    <div class="col-md-3">
+      <p>Order <%= @order.id %> status is : <%= @order.status.name %></p>
+      <p>
+      <p><%= link_to 'Return the homepage', root_path %></p>
+    </div>
+    <% else %>
     <p>Order not found.</p>
     </div>
   <% end %>

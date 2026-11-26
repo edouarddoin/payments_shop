@@ -44,6 +44,26 @@ class OrdersController < ApplicationController
     # if necessary create a new value call "newOrderPrice" to store the new price after discount.
   end
 
+  def payment_result
+    order = current_user.orders.find(params[:id])
+
+    session_id = order.checkout_session_id   # the {id}: from your database
+    session_result = params[:sessionResult]      # the {sessionResult}: from Request query string
+
+    adyen = Adyen::Client.new
+    adyen.api_key = ENV.fetch("ADYEN_API_KEY")
+    adyen.env = :test
+
+    # This is the call to GET /sessions/{session_id}?sessionResult={session_result}
+    response = adyen.checkout.payments_api.get_result_of_payment_session(
+      session_id,
+      query_params: { sessionResult: session_result }   # check the exact signature in the gem
+    )
+    redirect_to order_path(order.id), notice: "Your order number #{order.id} is paid successfully"
+    # ...read response["status"], update the order, then redirect_to order_path(order)
+    validate(order)
+  end
+
   private
 
   def create_adyen_session(order)
@@ -122,26 +142,8 @@ class OrdersController < ApplicationController
 
   end
 
-  def validate
+  def validate(order)
     order.update!(status: Status.find_by!(name: "validated")) unless order.status.name == "validated"
-  end
-
-  def GetPaymentResult
-    order = current_user.orders.find(params[:id])
-
-    session_id = order.checkout_session_id   # the {id}: from your database
-    session_result = params[:sessionResult]      # the {sessionResult}: from Request query string
-
-    adyen = Adyen::Client.new
-    adyen.api_key = ENV.fetch("ADYEN_API_KEY")
-    adyen.env = :test
-
-    # This is the call to GET /sessions/{session_id}?sessionResult={session_result}
-    response = adyen.checkout.payments_api.get_result_of_payment_session(
-      session_id,
-      query_params: { sessionResult: session_result }   # check the exact signature in the gem
-    )
-    # ...read response["status"], update the order, then redirect_to order_path(order)
   end
 
 end
